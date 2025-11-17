@@ -183,6 +183,14 @@ jobs:
       - name: Install Alpine build dependencies
         run: apk add --no-cache build-base git
 
+      - name: Install GNU tar (required by actions/cache)
+        run: |
+          apk add --no-cache gnu-tar || true
+          # ensure 'tar' points to GNU tar (gtar)
+          if [ -x "/usr/bin/gtar" ]; then
+            ln -sf /usr/bin/gtar /usr/bin/tar
+          fi
+
       - name: Install uv
         run: pip install uv
 
@@ -225,9 +233,13 @@ jobs:
       - name: Install wheel
         shell: bash
         run: |
-          wheel_file=$(find artifacts -name "*.whl" -type f | head -n 1)
+          # Prefer wheel built for this matrix OS, then fallback to alpine artifact, then dist/
+          wheel_file=$(ls artifacts/matrix/*.whl 2>/dev/null | head -n 1 || true)
           if [ -z "$wheel_file" ]; then
-            wheel_file=$(ls dist/*.whl 2>/dev/null | head -n 1)
+            wheel_file=$(ls artifacts/alpine/*.whl 2>/dev/null | head -n 1 || true)
+          fi
+          if [ -z "$wheel_file" ]; then
+            wheel_file=$(ls dist/*.whl 2>/dev/null | head -n 1 || true)
           fi
           if [ -z "$wheel_file" ]; then
             echo "No wheel file found" >&2
