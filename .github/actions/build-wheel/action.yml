@@ -14,11 +14,9 @@ runs:
   steps:
     - name: Install Dependencies
       run: uv sync --no-install-project
-      shell: bash
 
     - name: Set path in environment
       run: echo "PROJECT_ROOT=${{ github.workspace }}" >> $GITHUB_ENV
-      shell: bash
 
     - name: Cache Bindings
       id: cache-bindings
@@ -30,13 +28,11 @@ runs:
     - name: Build Extensions
       if: steps.cache-bindings.outputs.cache-hit != 'true'
       run: uv run setup.py build_ext --inplace
-      shell: bash
       env:
         PROJECT_ROOT: ${{github.workspace}}
 
     - name: Build wheel
       run: uv build --wheel
-      shell: bash
       env:
         PROJECT_ROOT: ${{github.workspace}}
 
