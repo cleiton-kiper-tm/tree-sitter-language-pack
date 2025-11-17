@@ -122,7 +122,7 @@ jobs:
           path: parsers
 
       - name: Install Alpine build dependencies
-        run: apk add --no-cache build-base
+        run: apk add --no-cache build-base git
 
       - name: Install uv
         run: pip install uv
