@@ -91,7 +91,7 @@ jobs:
     needs: clone_vendors
     strategy:
       matrix:
-        os: [ubuntu-latest, macos-15, windows-latest, ubuntu-24.04-arm]
+        os: [ubuntu-latest, macos-15, windows-latest, ubuntu-24.04-arm, alpine-latest]
     name: Build wheel on ${{matrix.os}}
     runs-on: ${{matrix.os}}
     steps:
@@ -143,20 +143,20 @@ jobs:
         name: dist-wheel-${{ matrix.os }}-${{ strategy.job-index }}
         if-no-files-found: error
         path: dist
-  publish:
-    name: Publish Python package
-    needs: [build-sdist, build-wheels]
-    runs-on: ubuntu-latest
-    environment: pypi
-    permissions:
-      id-token: write
-    steps:
-    - name: Download build artifacts
-      uses: actions/download-artifact@v4
-      with:
-        path: dist
-        pattern: dist-*
-        merge-multiple: true
+  # publish:
+  #   name: Publish Python package
+  #   needs: [build-sdist, build-wheels]
+  #   runs-on: ubuntu-latest
+  #   environment: pypi
+  #   permissions:
+  #     id-token: write
+  #   steps:
+  #   - name: Download build artifacts
+  #     uses: actions/download-artifact@v4
+  #     with:
+  #       path: dist
+  #       pattern: dist-*
+  #       merge-multiple: true
 
-    - name: Publish to PyPI
-      uses: pypa/gh-action-pypi-publish@release/v1
+  #   - name: Publish to PyPI
+  #     uses: pypa/gh-action-pypi-publish@release/v1
